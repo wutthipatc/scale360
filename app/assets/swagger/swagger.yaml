@@ -1,0 +1,170 @@
+swagger: '2.0'
+info:
+  description: Scale 360 API Document
+  version: 1.0.0
+  title: TODO LIST
+  contact:
+    email: moderndogs@gmail.com
+host: 'localhost:9000'
+tags:
+  - name: Task API
+    description: Everything about your to do list
+schemes:
+  - http
+paths:
+  /task:
+    post:
+      tags:
+        - Task API
+      summary: Add a new task to to do list
+      operationId: addTask
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - name: subject
+          in: formData
+          description: Subject of an added task
+          required: true
+          type: string
+        - name: detail
+          in: formData
+          description: Detail of an added task
+          required: true
+          type: string
+        - name: status
+          in: formData
+          description: 'Status of an added task, Pending or Done'
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Cannot map form data to object task, or status is not Pending nor Done
+  '/task/{id}':
+    get:
+      tags:
+        - Task API
+      summary: Get the id-specific task
+      operationId: getTask
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of task that need to be get
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not found the specified task
+        '400':
+          description: Data type of parameter incorrect eg; id=abc
+    put:
+      tags:
+        - Task API
+      summary: Update the id-specific task
+      operationId: updateTask
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - name: id
+          in: path
+          description: Id of task that need to be updated
+          required: true
+          type: integer
+        - name: subject
+          in: formData
+          description: Updated subject of the id-specific task
+          required: true
+          type: string
+        - name: detail
+          in: formData
+          description: Updated detail of the id-specific task
+          required: true
+          type: string
+        - name: status
+          in: formData
+          description: 'Updated status of the id-specific task, Pending or Done'
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Task has been updated with no content return
+        '404':
+          description: The specified task was not found
+        '400':
+          description: Cannot map form data to object task, or status is not Pending nor Done
+    delete:
+      tags:
+        - Task API
+      summary: Delete the id-specific task
+      parameters:
+        - name: id
+          in: path
+          description: Id of task that need to be deleted
+          required: true
+          type: integer
+      responses:
+        '204':
+          description: The specified task has been deleted with no content return
+        '404':
+          description: Not found the specified task
+        '400':
+          description: Data type of parameter incorrect eg; id=abc
+  /tasks:
+    get:
+      tags:
+        - Task API
+      summary: Get all task list
+      operationId: getTasks
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK(The list with task or empty list)
+  '/task/{id}/updateStatus':
+    put:
+      tags:
+        - Task API
+      summary: Update the status of the id-specific task
+      operationId: updateStatus
+      consumes:
+        - text/plain
+      parameters:
+        - name: id
+          in: path
+          description: Id of task that need to be status-updated
+          required: true
+          type: integer
+        - in: body
+          name: status
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Update status complete with no content return
+        '404':
+          description: Not found the specified task
+        '400':
+          description: The request text is not Pending nor Done or data type of parameter incorrect eg; id=abc
+definitions:
+  Task:
+    type: object
+    required:
+      - subject
+      - detail
+      - status
+    properties:
+      subject:
+        type: string
+        example: testSubject
+      detail:
+        type: string
+        example: testDetail
+      status:
+        type: string
+        example: PendingOrDone
